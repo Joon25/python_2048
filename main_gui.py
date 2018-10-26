@@ -5,8 +5,8 @@ from colour_table import *
 RECT_WIDTH = 50
 RECT_HEIGHT = 50
 TILE_SIZE = 50
-X_GRID = 4
-Y_GRID = 4
+X_TILE = 4
+Y_TILE = 4
 BASICFONTSIZE = 20
 
 def main():
@@ -16,7 +16,11 @@ def main():
     MainFrame.fill(WHITE)
     BasicFont = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
 
-    drawTile(MainFrame, BasicFont, pygame.Color('Yellow'), 50, 50, 1)
+
+    for yTile in range(Y_TILE):
+        for xTile in range(X_TILE):
+            drawTile(MainFrame, BasicFont, pygame.Color('Yellow'), RECT_WIDTH * (xTile+1), RECT_HEIGHT*(yTile+1),
+                     yTile * Y_TILE + xTile + 1)
 
     while True:
         for event in pygame.event.get():
@@ -40,6 +44,7 @@ def makeText(FontObj, text, color, bgcolor, top, left):
 
 def drawTile(MainObj, TextObj,  color, tilex, tiley, number):
     pygame.draw.rect(MainObj, color, (tilex, tiley, TILE_SIZE, TILE_SIZE))
+    pygame.draw.rect(MainObj, pygame.Color('BLUE'), (tilex, tiley, TILE_SIZE, TILE_SIZE), 2)
     textSurf = TextObj.render(str(number), True, pygame.Color('Red'))
     textRect = textSurf.get_rect()
     textRect.center = (tilex + int(TILE_SIZE/2), tiley + int(TILE_SIZE/2))
