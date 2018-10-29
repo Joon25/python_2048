@@ -1,6 +1,6 @@
 import pygame, sys, random
 from pygame.locals import *
-from colour_table import *
+from colour import *
 
 RECT_WIDTH = 50
 RECT_HEIGHT = 50
@@ -22,11 +22,11 @@ def main():
 
     for yTile in range(Y_TILE):
         for xTile in range(X_TILE):
-            #if ((yTile+1) * Y_TILE + xTile + 1) % 5 == 0:
+            if ((yTile+1) * Y_TILE + xTile + 1) % 5 == 0:
                 disableTile(MainFrame, RECT_WIDTH * (xTile+1), RECT_HEIGHT*(yTile+1))
-            #else:
-            #   drawTile(MainFrame, BasicFont, pygame.Color('Yellow'), RECT_WIDTH * (xTile+1), RECT_HEIGHT*(yTile+1),
-            #       yTile * Y_TILE + xTile + 1)
+            else:
+               drawTile(MainFrame, BasicFont, pygame.Color('Yellow'), RECT_WIDTH * (xTile+1), RECT_HEIGHT*(yTile+1),
+                   yTile * Y_TILE + xTile + 1)
 
     while True:
         for event in pygame.event.get():
