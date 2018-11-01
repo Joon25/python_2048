@@ -35,6 +35,16 @@ def main():
                 pygame.quit()
                 sys.exit()
 
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_DOWN:
+                    print ('Down key pressed')
+                if event.key == pygame.K_UP:
+                    print ('Up key pressed')
+                if event.key == pygame.K_RIGHT:
+                    print ('Right key pressed')
+                if event.key == pygame.K_LEFT:
+                    print ('Left key pressed')
+
         pygame.display.update()
 
 
