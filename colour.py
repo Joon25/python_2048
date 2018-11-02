@@ -22,3 +22,23 @@ L15th_Color = pygame.Color('olivedrab3')      # 32768
 L16th_Color = pygame.Color('lightpink3')      # 65536
 L17th_Color = pygame.Color('olivedrab3')      # 131072
 L18th_Color = pygame.Color('orchid3')         # 262144
+
+ColorDict = {
+    0 : 'aliceblue',
+    2 : 'moccasin',
+    4 : 'navajowhite1',
+    8 : 'navajowhite2',
+    16 : 'orange1',
+    32 : 'olivedrab1',
+    64 : 'lightpink1',
+    128 : 'olivedrab1',
+    256 : 'orchid1',
+    512 : 'orange2',
+    1024 : 'olivedrab2',
+    2048 : 'lightpink2',
+    4096 : 'olivedrab2',
+    8192 : 'orchid2',
+    16384 : 'orange3',
+    32768 : 'olivedrab3',
+    65536 : 'lightpink3'
+}
