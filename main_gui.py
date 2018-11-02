@@ -27,7 +27,9 @@ def main():
 
     for i in range(2):
         x_pos, y_pos,  number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
+        print (y_pos,x_pos, number)
         drawTile(MainFrame, BasicFont, pygame.Color(ColorDict[number]), x_pos, y_pos, number)
+    #drawAllTiles(MainFrame, BasicFont, tile_array)
 
     while True:
         for event in pygame.event.get():
@@ -49,6 +51,9 @@ def main():
 
                 if key_valid == True:
                     moveTiles(MainFrame, BasicFont, event.key, tile_array)
+                    x_pos, y_pos, number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
+                    if x_pos == -1:
+                        print ("Game is over")
 
 
         pygame.display.update()
@@ -85,6 +90,7 @@ def disableTile(MainObj, tilex, tiley):
     pygame.draw.rect(MainObj, DISABLE_COLOR, ((tilex+1)*RECT_WIDTH, (tiley+1)*RECT_HEIGHT, TILE_SIZE, TILE_SIZE))
     pygame.draw.rect(MainObj, BORDER_COLOR, ((tilex+1)*RECT_WIDTH, (tiley+1)*RECT_HEIGHT, TILE_SIZE, TILE_SIZE), 2)
 
+
 def generateNewTile(MainObj, array, xSize, ySize):
 
     while True:
@@ -94,24 +100,35 @@ def generateNewTile(MainObj, array, xSize, ySize):
         population = [2, 4]
         weights = [0.9, 0.1]
 
-        if array[x_pos][y_pos] == 0:
-            array[x_pos][y_pos] = choices(population, weights)[0]
-            return (x_pos, y_pos, array[x_pos][y_pos])
+        if array[y_pos][x_pos] == 0:
+            array[y_pos][x_pos] = choices(population, weights)[0]
+            return (x_pos, y_pos, array[y_pos][x_pos])
 
-        if array.count[0] == 0:
+        if sum(x.count[0] for x in array)  == 0:
             return (-1, -1, -1)
 
 def moveTiles(MainObj, FontObj, direction, array):
 
-    drawAllTiles(MainObj, FontObj, array)
-
     if direction == K_DOWN:
         print ("Down key pressed")
-
     if direction == K_UP:
         print ("Up key pressed")
     if direction == K_RIGHT:
         print ("Right key pressed")
+
+        for index_y in range(Y_TILE):
+            for index_x in reversed(range(X_TILE)):
+                pos = index_x
+                for shift_x in range(pos):
+                    if array[index_y][X_TILE-1-shift_x] == 0:
+                        array[index_y][X_TILE-1-shift_x] = array[index_y][X_TILE-2-shift_x]
+                        array[index_y][X_TILE - 2 - shift_x] = 0
+
+                    elif array[index_y][X_TILE-1-shift_x] == array[index_y][X_TILE-2-shift_x]:
+                        array[index_y][X_TILE-1-shift_x] *= 2
+                        array[index_y][X_TILE-2-shift_x] = 0
+
+        drawAllTiles(MainObj, FontObj, array)
     if direction == K_LEFT:
         print ("Left key pressed")
     score = 0
@@ -122,10 +139,10 @@ def drawAllTiles(MainObj, FontObj, array):
         for xTile in range(X_TILE):
             number = xTile + yTile*Y_TILE
             print (number, yTile, xTile)
-            if array[xTile][yTile] == 0:
+            if array[yTile][xTile] == 0:
                 disableTile(MainObj, xTile, yTile)
             else:
-                drawTile(MainObj, FontObj, pygame.Color(ColorDict[array[xTile][yTile]]), xTile, yTile, array[xTile][yTile])
+                drawTile(MainObj, FontObj, pygame.Color(ColorDict[array[yTile][xTile]]), xTile, yTile, array[yTile][xTile])
 
 
 if __name__ == '__main__':
