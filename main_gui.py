@@ -104,7 +104,7 @@ def generateNewTile(MainObj, array, xSize, ySize):
             array[y_pos][x_pos] = choices(population, weights)[0]
             return (x_pos, y_pos, array[y_pos][x_pos])
 
-        if sum(x.count[0] for x in array)  == 0:
+        if sum(x.count(0) for x in array)  == 0:
             return (-1, -1, -1)
 
 def moveTiles(MainObj, FontObj, direction, array):
