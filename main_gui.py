@@ -11,7 +11,11 @@ X_TILE = 4
 Y_TILE = 4
 BASICFONTSIZE = 20
 
-tile_array = [[2,0,0,2], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
+TILECOLOR = pygame.Color('green')
+TEXTCOLOR = pygame.Color('white')
+
+tile_array = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
+SCORE = 0
 
 def main():
     pygame.init()
@@ -20,16 +24,14 @@ def main():
     MainFrame.fill(pygame.Color('white'))
     BasicFont = pygame.font.Font('freesansbold.ttf', BASICFONTSIZE)
 
-
     for yTile in range(Y_TILE):
         for xTile in range(X_TILE):
             disableTile(MainFrame, xTile, yTile)
 
-    '''
+
     for i in range(2):
         x_pos, y_pos,  number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
         drawTile(MainFrame, BasicFont, pygame.Color(ColorDict[number]), x_pos, y_pos, number)
-    '''
     drawAllTiles(MainFrame, BasicFont, tile_array)
 
 
@@ -112,6 +114,7 @@ def generateNewTile(MainObj, array, xSize, ySize):
             return (-1, -1, -1)
 
 def moveTiles(MainObj, FontObj, direction, array):
+    global SCORE
 
     if direction == K_DOWN:
         print ("Down key pressed")
@@ -138,6 +141,8 @@ def moveTiles(MainObj, FontObj, direction, array):
                     break
                 elif array[index+1][index_x] == array[index][index_x]:
                     array[index+1][index_x] *= 2
+                    array[index][index_x] = 0
+                    SCORE += array[index+1][index_x]
                     for new_index in reversed(range(index)):
                         array[new_index+1][index_x] = array[new_index][index_x]
                     array[0][index_x] = 0
@@ -166,6 +171,7 @@ def moveTiles(MainObj, FontObj, direction, array):
                 elif array[index][index_x] == array[index+1][index_x]:
                     array[index][index_x] *= 2
                     array[index+1][index_x] = 0
+                    SCORE += array[index][index_x]
                     for new_index in range(max_shift - 1):
                         array[index+new_index+1][index_x] = array[index+new_index+2][index_x]
                         array[index+new_index+2][index_x] = 0
@@ -195,6 +201,8 @@ def moveTiles(MainObj, FontObj, direction, array):
                     break
                 elif array[index_y][index+1] == array[index_y][index]:
                     array[index_y][index+1] *= 2
+                    array[index_y][index] = 0
+                    SCORE += array[index_y][index+1]
                     for new_index in reversed(range(index)):
                         array[index_y][new_index+1] = array[index_y][new_index]
                     array[index_y][0] = 0
@@ -223,14 +231,14 @@ def moveTiles(MainObj, FontObj, direction, array):
                 elif array[index_y][index] == array[index_y][index+1]:
                     array[index_y][index] *= 2
                     array[index_y][index+1] = 0
+                    SCORE += array[index_y][index]
                     for new_index in range(max_shift-1):
                         array[index_y][index+new_index+1] = array[index_y][index+ new_index+2]
                         array[index_y][index+new_index+2] = 0
 
-    score = 0
-    return score
 
 def drawAllTiles(MainObj, FontObj, array):
+    MainObj.fill(pygame.Color('white'))
     for yTile in range(Y_TILE):
         for xTile in range(X_TILE):
             number = xTile + yTile*Y_TILE
@@ -239,6 +247,11 @@ def drawAllTiles(MainObj, FontObj, array):
                 disableTile(MainObj, xTile, yTile)
             else:
                 drawTile(MainObj, FontObj, pygame.Color(ColorDict[array[yTile][xTile]]), xTile, yTile, array[yTile][xTile])
+
+    textSurf, textRect = displayText(FontObj, str("Score : "), pygame.Color('Red'), 300, 50)
+    MainObj.blit(textSurf, textRect)
+    textSurf, textRect = displayText(FontObj, str(SCORE), pygame.Color('Red'), 400, 50)
+    MainObj.blit(textSurf, textRect)
 
 
 if __name__ == '__main__':
