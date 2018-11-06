@@ -3,6 +3,7 @@ from pygame.locals import *
 from colour import *
 from random import randint
 from random import choices
+import time
 
 RECT_WIDTH = 50
 RECT_HEIGHT = 50
@@ -55,11 +56,13 @@ def main():
 
                 if key_valid == True:
                     moveTiles(MainFrame, BasicFont, event.key, tile_array)
+                    drawAllTiles(MainFrame, BasicFont, tile_array)
                     x_pos, y_pos, number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
                     if x_pos == -1:
                         print ("Game is over")
                         break
-                    drawAllTiles(MainFrame, BasicFont, tile_array)
+                    #drawAllTiles(MainFrame, BasicFont, tile_array)
+                    time.sleep(0.5)
                     drawTile(MainFrame, BasicFont, pygame.Color("yellow"), x_pos, y_pos, number)
 
         pygame.display.update()
@@ -253,6 +256,7 @@ def drawAllTiles(MainObj, FontObj, array):
     textSurf, textRect = displayText(FontObj, str(SCORE), pygame.Color('Red'), 400, 50)
     MainObj.blit(textSurf, textRect)
 
+    pygame.display.update()
 
 if __name__ == '__main__':
     main()
