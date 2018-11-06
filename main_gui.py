@@ -11,7 +11,7 @@ X_TILE = 4
 Y_TILE = 4
 BASICFONTSIZE = 20
 
-tile_array = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
+tile_array = [[2,0,0,2], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
 
 def main():
     pygame.init()
@@ -25,11 +25,13 @@ def main():
         for xTile in range(X_TILE):
             disableTile(MainFrame, xTile, yTile)
 
+    '''
     for i in range(2):
         x_pos, y_pos,  number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
-        print (y_pos,x_pos, number)
         drawTile(MainFrame, BasicFont, pygame.Color(ColorDict[number]), x_pos, y_pos, number)
-    #drawAllTiles(MainFrame, BasicFont, tile_array)
+    '''
+    drawAllTiles(MainFrame, BasicFont, tile_array)
+
 
     while True:
         for event in pygame.event.get():
@@ -54,7 +56,9 @@ def main():
                     x_pos, y_pos, number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
                     if x_pos == -1:
                         print ("Game is over")
-
+                        break
+                    drawAllTiles(MainFrame, BasicFont, tile_array)
+                    drawTile(MainFrame, BasicFont, pygame.Color("yellow"), x_pos, y_pos, number)
 
         pygame.display.update()
 
@@ -111,26 +115,118 @@ def moveTiles(MainObj, FontObj, direction, array):
 
     if direction == K_DOWN:
         print ("Down key pressed")
+
+        for index_x in range(X_TILE):
+
+            # remove 0 between non-zero tiles
+            for index_y in reversed(range(Y_TILE - 1)):
+                endIndex = Y_TILE - 1
+                max_shift = endIndex - index_y
+                if array[index_y][index_x] == 0:
+                    continue
+                else:
+                    for index in range(max_shift):
+                        if array[index_y + index + 1][index_x] == 0:
+                            array[index_y+index+1][index_x] = array[index_y+index][index_x]
+                            array[index_y+index][index_x] = 0
+                        else:
+                            continue
+
+            # Add up same value on tile
+            for index in reversed(range(Y_TILE - 1)):
+                if array[index+1][index_x] == 0:
+                    break
+                elif array[index+1][index_x] == array[index][index_x]:
+                    array[index+1][index_x] *= 2
+                    for new_index in reversed(range(index)):
+                        array[new_index+1][index_x] = array[new_index][index_x]
+                    array[0][index_x] = 0
+
     if direction == K_UP:
         print ("Up key pressed")
+
+        for index_x in range(X_TILE):
+
+            # remove 0 between non-zero tiles
+            for index_y in range(Y_TILE - 1):
+                max_shift = Y_TILE - 1 - index_y
+
+                for index in range(max_shift):
+                    if array[index][index_x] == 0:
+                        array[index][index_x] = array[index+1][index_x]
+                        array[index+1][index_x] = 0
+                    else:
+                        continue
+
+            # Add up same value on tile
+            for index in range(Y_TILE - 1):
+                max_shift = Y_TILE - 1 - index
+                if array[index][index_x] == 0:
+                    break
+                elif array[index][index_x] == array[index+1][index_x]:
+                    array[index][index_x] *= 2
+                    array[index+1][index_x] = 0
+                    for new_index in range(max_shift - 1):
+                        array[index+new_index+1][index_x] = array[index+new_index+2][index_x]
+                        array[index+new_index+2][index_x] = 0
+
     if direction == K_RIGHT:
         print ("Right key pressed")
 
         for index_y in range(Y_TILE):
-            for index_x in reversed(range(X_TILE)):
-                pos = index_x
-                for shift_x in range(pos):
-                    if array[index_y][X_TILE-1-shift_x] == 0:
-                        array[index_y][X_TILE-1-shift_x] = array[index_y][X_TILE-2-shift_x]
-                        array[index_y][X_TILE - 2 - shift_x] = 0
 
-                    elif array[index_y][X_TILE-1-shift_x] == array[index_y][X_TILE-2-shift_x]:
-                        array[index_y][X_TILE-1-shift_x] *= 2
-                        array[index_y][X_TILE-2-shift_x] = 0
+            # remove 0 between non-zero tiles
+            for index_x in reversed(range(X_TILE-1)):
+                endIndex = X_TILE - 1
+                max_shift = endIndex - index_x
+                if array[index_y][index_x] == 0:
+                    continue
+                else:
+                    for index in range(max_shift):
+                        if array[index_y][index_x+index+1] == 0:
+                            array[index_y][index_x+index+1] = array[index_y][index_x+index]
+                            array[index_y][index_x+index] = 0
+                        else:
+                            continue
 
-        drawAllTiles(MainObj, FontObj, array)
+            # Add up same value on tile
+            for index in reversed(range(X_TILE-1)):
+                if array[index_y][index+1] == 0:
+                    break
+                elif array[index_y][index+1] == array[index_y][index]:
+                    array[index_y][index+1] *= 2
+                    for new_index in reversed(range(index)):
+                        array[index_y][new_index+1] = array[index_y][new_index]
+                    array[index_y][0] = 0
+
     if direction == K_LEFT:
         print ("Left key pressed")
+
+        for index_y in range(Y_TILE):
+
+            # remove 0 between non-zero tiles
+            for index_x in range(X_TILE-1):
+                max_shift = X_TILE - 1 - index_x
+
+                for index in range(max_shift):
+                    if array[index_y][index] == 0:
+                        array[index_y][index] = array[index_y][index + 1]
+                        array[index_y][index + 1] = 0
+                    else:
+                        continue
+
+            # Add up same value on tile
+            for index in range(X_TILE - 1):
+                max_shift = X_TILE - 1 - index
+                if array[index_y][index] == 0:
+                    break
+                elif array[index_y][index] == array[index_y][index+1]:
+                    array[index_y][index] *= 2
+                    array[index_y][index+1] = 0
+                    for new_index in range(max_shift-1):
+                        array[index_y][index+new_index+1] = array[index_y][index+ new_index+2]
+                        array[index_y][index+new_index+2] = 0
+
     score = 0
     return score
 
@@ -138,7 +234,7 @@ def drawAllTiles(MainObj, FontObj, array):
     for yTile in range(Y_TILE):
         for xTile in range(X_TILE):
             number = xTile + yTile*Y_TILE
-            print (number, yTile, xTile)
+            #print (number, yTile, xTile)
             if array[yTile][xTile] == 0:
                 disableTile(MainObj, xTile, yTile)
             else:
