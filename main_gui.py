@@ -260,3 +260,4 @@ def drawAllTiles(MainObj, FontObj, array):
 
 if __name__ == '__main__':
     main()
+
