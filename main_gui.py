@@ -12,13 +12,15 @@ X_TILE = 4
 Y_TILE = 4
 BASICFONTSIZE = 20
 
-TILECOLOR = pygame.Color('green')
-TEXTCOLOR = pygame.Color('white')
-
 tile_array = [[0,0,0,0], [0,0,0,0], [0,0,0,0], [0,0,0,0]]
 SCORE = 0
+DELAY_TIME = 0.1
 
-def main():
+def game_2048():
+
+    '''
+    initialize main frame and font
+    '''
     pygame.init()
     MainFrame = pygame.display.set_mode((RECT_WIDTH*10,RECT_HEIGHT*10))
     pygame.display.set_caption('Slide Game')
@@ -27,14 +29,14 @@ def main():
 
     for yTile in range(Y_TILE):
         for xTile in range(X_TILE):
-            disableTile(MainFrame, xTile, yTile)
+            drawEmptyTiles(MainFrame, xTile, yTile)
 
-
+    # generate 2 tiles to start the game
     for i in range(2):
         x_pos, y_pos,  number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
         drawTile(MainFrame, BasicFont, pygame.Color(ColorDict[number]), x_pos, y_pos, number)
-    drawAllTiles(MainFrame, BasicFont, tile_array)
 
+    drawAllTiles(MainFrame, BasicFont, tile_array)
 
     while True:
         for event in pygame.event.get():
@@ -42,6 +44,12 @@ def main():
                 print ('QUIT button pressed')
                 pygame.quit()
                 sys.exit()
+
+            if isFullTiles(tile_array, X_TILE, Y_TILE) is True:
+                # display game over and exit the program
+                textSurf, textRect = displayText(BasicFont, str("Game is over"), pygame.Color('Red'), RECT_WIDTH*5, RECT_HEIGHT*5)
+                MainFrame.blit(textSurf, textRect)
+                continue
 
             key_valid = False;
             if event.type == KEYDOWN:
@@ -60,26 +68,36 @@ def main():
 
                     if isMoved == True:
                         x_pos, y_pos, number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
-                        if x_pos == -1:
-                            print ("Game is over")
-                            break
-                        #drawAllTiles(MainFrame, BasicFont, tile_array)
-                        time.sleep(0.5)
+                        time.sleep(DELAY_TIME)
                         drawTile(MainFrame, BasicFont, pygame.Color("yellow"), x_pos, y_pos, number)
 
         pygame.display.update()
 
-def checkTilesFull(array, x_size, y_size):
-    isFull = False
 
+def isFullTiles(array, x_size, y_size):
+    isFull = True
+
+    # check if 0 is in any tile
     for y in range(y_size):
         for x in range(x_size):
             if array[y][x] == 0:
-                return isFull
+                isFull = False
+                break
 
-    isFull = True
+    # check if the number is equal with adjacent tile
+    for y in range(y_size):
+        for x in range(x_size-1):
+            if array[y][x] == array[y][x+1]:
+                isFull = False
+                break
+
+    for x in range(x_size):
+        for y in range(y_size-1):
+            if array[y][x] == array[y+1][x]:
+                isFull = False
+                break
+
     return isFull
-
 
 def displayText(FontObj, text, color, top, left):
     textSurf = FontObj.render(text, True, color)
@@ -104,11 +122,12 @@ def drawTile(MainObj, TextObj,  color, index_x, index_y, number):
     MainObj.blit(textSurf, textRect)
 
 '''
+disableTile : display empty tiles
 MainObj : Main frame object
 tilex   : x position of the tile
 tiley   : y position of the tile
 '''
-def disableTile(MainObj, tilex, tiley):
+def drawEmptyTiles(MainObj, tilex, tiley):
     pygame.draw.rect(MainObj, DISABLE_COLOR, ((tilex+1)*RECT_WIDTH, (tiley+1)*RECT_HEIGHT, TILE_SIZE, TILE_SIZE))
     pygame.draw.rect(MainObj, BORDER_COLOR, ((tilex+1)*RECT_WIDTH, (tiley+1)*RECT_HEIGHT, TILE_SIZE, TILE_SIZE), 2)
 
@@ -275,7 +294,7 @@ def drawAllTiles(MainObj, FontObj, array):
             number = xTile + yTile*Y_TILE
             #print (number, yTile, xTile)
             if array[yTile][xTile] == 0:
-                disableTile(MainObj, xTile, yTile)
+                drawEmptyTiles(MainObj, xTile, yTile)
             else:
                 drawTile(MainObj, FontObj, pygame.Color(ColorDict[array[yTile][xTile]]), xTile, yTile, array[yTile][xTile])
 
@@ -287,5 +306,5 @@ def drawAllTiles(MainObj, FontObj, array):
     pygame.display.update()
 
 if __name__ == '__main__':
-    main()
+    game_2048()
 
