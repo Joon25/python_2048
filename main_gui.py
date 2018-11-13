@@ -55,17 +55,30 @@ def main():
                     key_valid = True;
 
                 if key_valid == True:
-                    moveTiles(MainFrame, BasicFont, event.key, tile_array)
+                    isMoved = moveTiles(MainFrame, BasicFont, event.key, tile_array)
                     drawAllTiles(MainFrame, BasicFont, tile_array)
-                    x_pos, y_pos, number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
-                    if x_pos == -1:
-                        print ("Game is over")
-                        break
-                    #drawAllTiles(MainFrame, BasicFont, tile_array)
-                    time.sleep(0.5)
-                    drawTile(MainFrame, BasicFont, pygame.Color("yellow"), x_pos, y_pos, number)
+
+                    if isMoved == True:
+                        x_pos, y_pos, number = generateNewTile(MainFrame, tile_array, X_TILE, Y_TILE)
+                        if x_pos == -1:
+                            print ("Game is over")
+                            break
+                        #drawAllTiles(MainFrame, BasicFont, tile_array)
+                        time.sleep(0.5)
+                        drawTile(MainFrame, BasicFont, pygame.Color("yellow"), x_pos, y_pos, number)
 
         pygame.display.update()
+
+def checkTilesFull(array, x_size, y_size):
+    isFull = False
+
+    for y in range(y_size):
+        for x in range(x_size):
+            if array[y][x] == 0:
+                return isFull
+
+    isFull = True
+    return isFull
 
 
 def displayText(FontObj, text, color, top, left):
@@ -118,6 +131,7 @@ def generateNewTile(MainObj, array, xSize, ySize):
 
 def moveTiles(MainObj, FontObj, direction, array):
     global SCORE
+    moved = False
 
     if direction == K_DOWN:
         print ("Down key pressed")
@@ -134,7 +148,9 @@ def moveTiles(MainObj, FontObj, direction, array):
                     for index in range(max_shift):
                         if array[index_y + index + 1][index_x] == 0:
                             array[index_y+index+1][index_x] = array[index_y+index][index_x]
-                            array[index_y+index][index_x] = 0
+                            if array[index_y+index][index_x] != 0:
+                                array[index_y+index][index_x] = 0
+                                moved = True
                         else:
                             continue
 
@@ -149,6 +165,7 @@ def moveTiles(MainObj, FontObj, direction, array):
                     for new_index in reversed(range(index)):
                         array[new_index+1][index_x] = array[new_index][index_x]
                     array[0][index_x] = 0
+                    moved = True
 
     if direction == K_UP:
         print ("Up key pressed")
@@ -162,7 +179,9 @@ def moveTiles(MainObj, FontObj, direction, array):
                 for index in range(max_shift):
                     if array[index][index_x] == 0:
                         array[index][index_x] = array[index+1][index_x]
-                        array[index+1][index_x] = 0
+                        if array[index+1][index_x] != 0:
+                            array[index+1][index_x] = 0
+                            moved = True
                     else:
                         continue
 
@@ -178,6 +197,7 @@ def moveTiles(MainObj, FontObj, direction, array):
                     for new_index in range(max_shift - 1):
                         array[index+new_index+1][index_x] = array[index+new_index+2][index_x]
                         array[index+new_index+2][index_x] = 0
+                    moved = True
 
     if direction == K_RIGHT:
         print ("Right key pressed")
@@ -194,7 +214,9 @@ def moveTiles(MainObj, FontObj, direction, array):
                     for index in range(max_shift):
                         if array[index_y][index_x+index+1] == 0:
                             array[index_y][index_x+index+1] = array[index_y][index_x+index]
-                            array[index_y][index_x+index] = 0
+                            if array[index_y][index_x+index] != 0:
+                                array[index_y][index_x+index] = 0
+                                moved = True
                         else:
                             continue
 
@@ -209,6 +231,7 @@ def moveTiles(MainObj, FontObj, direction, array):
                     for new_index in reversed(range(index)):
                         array[index_y][new_index+1] = array[index_y][new_index]
                     array[index_y][0] = 0
+                    moved = True
 
     if direction == K_LEFT:
         print ("Left key pressed")
@@ -222,7 +245,9 @@ def moveTiles(MainObj, FontObj, direction, array):
                 for index in range(max_shift):
                     if array[index_y][index] == 0:
                         array[index_y][index] = array[index_y][index + 1]
-                        array[index_y][index + 1] = 0
+                        if array[index_y][index + 1] != 0:
+                            array[index_y][index + 1] = 0
+                            moved = True
                     else:
                         continue
 
@@ -238,7 +263,10 @@ def moveTiles(MainObj, FontObj, direction, array):
                     for new_index in range(max_shift-1):
                         array[index_y][index+new_index+1] = array[index_y][index+ new_index+2]
                         array[index_y][index+new_index+2] = 0
+                    moved = True
 
+    print (moved)
+    return moved
 
 def drawAllTiles(MainObj, FontObj, array):
     MainObj.fill(pygame.Color('white'))
